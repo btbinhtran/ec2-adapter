@@ -1,0 +1,7 @@
+{
+  "description": "Rename this `data.json` and add your keys.",
+  "aws": {
+    "key": "",
+    "secret": ""
+  }
+}
