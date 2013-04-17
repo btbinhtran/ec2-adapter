@@ -1,0 +1,8 @@
+.DS_Store
+tmp
+node_modules
+*.log
+components
+/build
+/dist
+test/data.json
