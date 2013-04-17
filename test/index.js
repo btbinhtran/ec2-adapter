@@ -14,7 +14,7 @@ describe('ec2 adapter', function(){
   it('should create/remove instances', function(done){
     var imageId = 'ami-7539b41c';
 
-    graph.select('instances').find(function(err, instances){
+    graph.select('instance').find(function(err, instances){
       console.log(instances)
       //ec2.create({ imageId: imageId }, function(){
       instances.forEach(function(i){
