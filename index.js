@@ -4,6 +4,8 @@
  */
 
 var adapter = require('tower-adapter')
+  , Topology = require('tower-topology').Topology
+  , stream = require('tower-stream')
   , aws = require('aws-lib')
   , address = require('./lib/address')
   , availabilityZone = require('./lib/availability-zone')
@@ -42,7 +44,7 @@ model('availability-zone')
   .attr('name', 'string', { alias: 'zoneName' })
   .attr('status', 'string', { alias: 'zoneState' })
   .attr('region', 'string', { alias: 'regionName' })
-  .stream('find', availabilityZone.find);
+  .action('find', availabilityZone.find);
 
 model('certificate');
 
@@ -55,10 +57,15 @@ model('image');
 model('instance')
   .id('id', { alias: 'instanceId' })
   .attr('status', { alias: 'instanceState.name' })
-  // .action
-  .stream('find', instance.find)
-  .stream('create', instance.create)
-  .stream('remove', instance.remove)
+  .action('find', instance.find)
+  .action('create', instance.create)
+  .action('remove', instance.remove);
+
+stream('ec2.instance.find')
+  .on('init', function(context){
+    context.ec2 = ec2;
+  })
+  .on('execute', instance.find)
 
 model('region');
 
@@ -80,7 +87,34 @@ model('volume');
 
 exports.connect = function(options, fn){
   ec2 = aws.createEC2Client(options.key, options.secret);
-  fn();
+  if (fn) fn();
+}
+
+exports.execute = function(criteria, fn){
+  var topology = new Topology
+    , name;
+
+  // XXX: this function should just split the criteria by model/adapter.
+  // then the adapter
+  for (var i = 0, n = criteria.length; i < n; i++) {
+    var criterion = criteria[i];
+    switch (criterion[0]) {
+      case 'select':
+      case 'start':
+        topology.stream(name = 'ec2.' + criterion[1] + '.find', { constraints: [] });
+        break;
+      case 'constraint':
+        topology.streams[name].constraints.push(criterion);
+        break;
+    }
+  }
+
+  // XXX: need to come up w/ API for adding events before it's executed.
+  process.nextTick(function(){
+    topology.execute();
+  });
+
+  return topology;
 }
 
 /**
