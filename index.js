@@ -22,7 +22,6 @@ var adapter = require('tower-adapter')
   , volume = require('./lib/volume')
   , ec2;
 
-
 adapter.model = model;
 
 /**
@@ -53,15 +52,11 @@ model('availability-zone')
 model('certificate');
 
 stream('ec2.certificate.create')
-  .on('init', function(context){
-    context.ec2 = ec2;
-  })
+  .on('init', init)
   .on('exec', certificate.create)
 
 stream('ec2.certificate.find')
-  .on('init', function(context){
-    context.ec2 = ec2;
-  })
+  .on('init', init)
   .on('exec', certificate.find)
 
 model('image');
@@ -69,9 +64,7 @@ model('image');
 stream('ec2.image.find')
   // XXX: maybe an API to do the same thing to every stream?
   // (since `context.ec2 = ec2` needs to happen everywhere).
-  .on('init', function(context){
-    context.ec2 = ec2;
-  })
+  .on('init', init)
   .on('exec', image.find)
 
 /**
@@ -86,27 +79,15 @@ model('instance')
   .action('remove', instance.remove);
 
 stream('ec2.instance.find')
-  // XXX: maybe an API to do the same thing to every stream?
-  // (since `context.ec2 = ec2` needs to happen everywhere).
-  .on('init', function(context){
-    context.ec2 = ec2;
-  })
+  .on('init', init)
   .on('exec', instance.find)
 
 stream('ec2.instance.create')
-  // XXX: maybe an API to do the same thing to every stream?
-  // (since `context.ec2 = ec2` needs to happen everywhere).
-  .on('init', function(context){
-    context.ec2 = ec2;
-  })
+  .on('init', init)
   .on('exec', instance.create)
 
 stream('ec2.instance.remove')
-  // XXX: maybe an API to do the same thing to every stream?
-  // (since `context.ec2 = ec2` needs to happen everywhere).
-  .on('init', function(context){
-    context.ec2 = ec2;
-  })
+  .on('init', init)
   .on('exec', instance.remove)
 
 model('region');
@@ -118,21 +99,15 @@ model('route-table');
 model('security-group');
 
 stream('ec2.security-group.create')
-  .on('init', function(context){
-    context.ec2 = ec2;
-  })
+  .on('init', init)
   .on('exec', securityGroup.create);
 
 stream('ec2.security-group.update')
-  .on('init', function(context){
-    context.ec2 = ec2;
-  })
+  .on('init', init)
   .on('exec', securityGroup.update);
 
 stream('ec2.security-group.find')
-  .on('init', function(context){
-    context.ec2 = ec2;
-  })
+  .on('init', init)
   .on('exec', securityGroup.find);
 
 model('snapshot');
@@ -189,4 +164,12 @@ exports.execute = function(criteria, fn){
 exports.disconnect = function(options, fn){
   ec2 = undefined;
   fn();
+}
+
+/**
+ * Common init for all actions.
+ */
+
+function init(context){
+    context.ec2 = ec2;
 }
