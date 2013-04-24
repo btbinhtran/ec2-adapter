@@ -117,6 +117,24 @@ model('route-table');
 
 model('security-group');
 
+stream('ec2.security-group.create')
+  .on('init', function(context){
+    context.ec2 = ec2;
+  })
+  .on('exec', securityGroup.create);
+
+stream('ec2.security-group.update')
+  .on('init', function(context){
+    context.ec2 = ec2;
+  })
+  .on('exec', securityGroup.update);
+
+stream('ec2.security-group.find')
+  .on('init', function(context){
+    context.ec2 = ec2;
+  })
+  .on('exec', securityGroup.find);
+
 model('snapshot');
 
 model('tag');
