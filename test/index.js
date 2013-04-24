@@ -16,27 +16,23 @@ describe('ec2 adapter', function(){
 
   it('should create/remove instances', function(done){
     query().use('ec2').select('instance').action('find').exec().on('data', function(instances){
-      // console.log(instances)
       query()
         .use('ec2')
         .select('instance')
-        .action('create', [{ imageId: imageId }])
+        // .where('id').in(ids)
+        .action('remove', instances)
         .exec()
-        .on('data', function(newInstances){
-          // console.log(newInstances);
-          var ids = instances.map(function(i) { return i.id; });
-
+        .on('data', function(instances){
           query()
             .use('ec2')
             .select('instance')
-            // .where('id').in(ids)
-            .action('remove', instances)
+            .action('create', [{ imageId: imageId, key: 'x' }])
             .exec()
-            .on('data', function(instances){
-              console.log(instances);
+            .on('data', function(newInstances){
+              console.log(newInstances);
               done();
             });
-        });
+      });
     });
   });
 
@@ -51,5 +47,30 @@ describe('ec2 adapter', function(){
         console.log(images);
         done();
       });
+  });
+
+  describe('certificate (key-pair)', function(){
+    it('should list', function(done){
+      query()
+      .use('ec2')
+      .select('certificate')
+      .action('find')
+      .exec()
+      .on('data', function(certificates){
+        console.log(certificates);
+        done();
+      });
+    });
+
+    it('should create', function(done){
+      query()
+      .use('ec2')
+      .select('certificate')
+      .action('create', [{ name: 'viatropos2' }])
+      .exec()
+      .on('data', function(certificates){
+        done();
+      });
+    });
   });
 });
