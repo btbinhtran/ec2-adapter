@@ -1,15 +1,16 @@
-var ec2 = require('..')
+var adapter = require('tower-adapter')
   , graph = require('tower-graph') // XXX: remove
   , query = require('tower-query')
   , assert = require('assert')
   , data = require('./data');
+
+var ec2 = require('..')(adapter('ec2'));
 
 describe('ec2 adapter', function(){
   var imageId = 'ami-7539b41c';
 
   before(function(done){
     ec2.connect(data.aws, function(){
-      // graph.use(ec2);
       done();
     });
   });
