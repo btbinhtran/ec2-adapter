@@ -3,7 +3,9 @@
  * Module dependencies.
  */
 
-var proto = require('./lib/proto');
+var adapter = require('tower-adapter')
+  , query = require('tower-query')
+  , proto = require('./lib/proto');
 
 /**
  * Expose `ec2` adapter.
@@ -15,7 +17,23 @@ module.exports = ec2;
  * Define `ec2` adapter.
  */
 
-function ec2(adapter) {
+function ec2(obj) {
+  if ('string' === typeof obj) {
+    // XXX: perform a simple query.
+    // XXX: refactor out to adapter base module.
+    // return query().start('ec2.' + obj);
+    return query().start('ec2.' + obj);
+  } else {
+    init(obj || adapter('ec2'));
+    return ec2;
+  }
+}
+
+/**
+ * Wire up the adapter.
+ */
+
+function init(obj) {
 
   /**
    * Lazy-loaded dependencies.
@@ -29,22 +47,24 @@ function ec2(adapter) {
     , 'key' // key-pair
     , 'region'
     , 'route'
-    , 'routeTable'
+    , 'route-table'
     , 'snapshot'
     , 'tag'
     , 'volume'
     , 'zone' // availability zone
   ].forEach(function(name){
-    adapter.model.load(name, require.resolve('./lib/models/' + name));
+    obj.model.load(name, require.resolve('./lib/models/' + name));
   });
 
-  for (var key in proto) adapter[key] = proto[key];
+  for (var key in proto) obj[key] = proto[key];
+
+  return obj;
 }
 
 /**
  * Common init for all actions.
  */
 
-function init(context){
+function initContext(context){
   context.ec2 = ec2;
 }

@@ -1,16 +1,18 @@
 var adapter = require('tower-adapter')
-  , graph = require('tower-graph') // XXX: remove
+  , model = require('tower-model')
   , query = require('tower-query')
   , assert = require('assert')
   , data = require('./data');
 
-var ec2 = require('..')(adapter('ec2'));
+adapter.model = model.ns('ec2');
+
+var ec2 = require('..')();
 
 describe('ec2 adapter', function(){
   var imageId = 'ami-7539b41c';
 
   before(function(done){
-    ec2.connect(data.aws, function(){
+    adapter('ec2').connect(data.aws, function(){
       done();
     });
   });
@@ -50,17 +52,15 @@ describe('ec2 adapter', function(){
       });
   });
 
-  describe('certificate (key-pair)', function(){
+  describe('key (key-pair)', function(){
     it('should list', function(done){
-      query()
-      .use('ec2')
-      .select('certificate')
-      .action('find')
-      .exec()
-      .on('data', function(certificates){
-        console.log(certificates);
-        done();
-      });
+      ec2('key')
+        .find()
+        .exec(function(err, keys){
+          console.log('done!')
+          console.log(arguments);
+          done();
+        });
     });
 
     it('should create', function(done){
