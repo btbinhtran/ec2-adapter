@@ -35,7 +35,7 @@ function ec2(adapter) {
     , 'volume'
     , 'zone' // availability zone
   ].forEach(function(name){
-    adapter.model.load(name, require.resolve('./lib/' + name));
+    adapter.model.load(name, require.resolve('./lib/models/' + name));
   });
 
   for (var key in proto) adapter[key] = proto[key];
