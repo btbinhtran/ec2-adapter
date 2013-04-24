@@ -23,6 +23,7 @@ npm install tower-ec2-adapter
 - http://stackoverflow.com/questions/10051533/aws-ec2-elastic-ips-bandwidth-usage-and-charges
 - http://support.smartbear.com/articles/testcomplete/using-elastic-ips-for-cloud-testing/
 - http://blog.serverdensity.com/global-elastic-ips-multi-region-routing/
+- http://techcrunch.com/2013/03/11/aws-just-made-it-a-whole-lot-easier-for-anyone-to-create-a-virtual-private-cloud-showing-again-how-enterprise-tech-is-obsolete/
 
 ### Frameworks
 
