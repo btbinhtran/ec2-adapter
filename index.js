@@ -54,6 +54,14 @@ model('certificate');
 
 model('image');
 
+stream('ec2.image.find')
+  // XXX: maybe an API to do the same thing to every stream?
+  // (since `context.ec2 = ec2` needs to happen everywhere).
+  .on('init', function(context){
+    context.ec2 = ec2;
+  })
+  .on('exec', image.find)
+
 /**
  * `Instance` model.
  */
@@ -108,7 +116,7 @@ model('volume');
  */
 
 exports.connect = function(options, fn){
-  ec2 = aws.createEC2Client(options.key, options.secret);
+  ec2 = aws.createEC2Client(options.key, options.secret, { version: '2013-02-01' });
   if (fn) fn();
 }
 
