@@ -4,6 +4,7 @@
  */
 
 var adapter = require('tower-adapter')
+  , model = require('tower-model')
   , Topology = require('tower-topology').Topology
   , stream = require('tower-stream')
   , aws = require('aws-lib')
@@ -20,6 +21,9 @@ var adapter = require('tower-adapter')
   , tag = require('./lib/tag')
   , volume = require('./lib/volume')
   , ec2;
+
+
+adapter.model = model;
 
 /**
  * Expose `ec2` adapter.
@@ -57,15 +61,33 @@ model('image');
 model('instance')
   .id('id', { alias: 'instanceId' })
   .attr('status', { alias: 'instanceState.name' })
-  .action('find', instance.find)
+  //.action('find')
   .action('create', instance.create)
   .action('remove', instance.remove);
 
 stream('ec2.instance.find')
+  // XXX: maybe an API to do the same thing to every stream?
+  // (since `context.ec2 = ec2` needs to happen everywhere).
   .on('init', function(context){
     context.ec2 = ec2;
   })
-  .on('execute', instance.find)
+  .on('exec', instance.find)
+
+stream('ec2.instance.create')
+  // XXX: maybe an API to do the same thing to every stream?
+  // (since `context.ec2 = ec2` needs to happen everywhere).
+  .on('init', function(context){
+    context.ec2 = ec2;
+  })
+  .on('exec', instance.create)
+
+stream('ec2.instance.remove')
+  // XXX: maybe an API to do the same thing to every stream?
+  // (since `context.ec2 = ec2` needs to happen everywhere).
+  .on('init', function(context){
+    context.ec2 = ec2;
+  })
+  .on('exec', instance.remove)
 
 model('region');
 
@@ -94,6 +116,8 @@ exports.execute = function(criteria, fn){
   var topology = new Topology
     , name;
 
+  var action = criteria[criteria.length - 1][1];
+
   // XXX: this function should just split the criteria by model/adapter.
   // then the adapter
   for (var i = 0, n = criteria.length; i < n; i++) {
@@ -101,17 +125,20 @@ exports.execute = function(criteria, fn){
     switch (criterion[0]) {
       case 'select':
       case 'start':
-        topology.stream(name = 'ec2.' + criterion[1] + '.find', { constraints: [] });
+        topology.stream(name = 'ec2.' + criterion[1] + '.' + action, { constraints: [] });
         break;
       case 'constraint':
         topology.streams[name].constraints.push(criterion);
+        break;
+      case 'action':
+        topology.streams[name].data = criterion[2];
         break;
     }
   }
 
   // XXX: need to come up w/ API for adding events before it's executed.
   process.nextTick(function(){
-    topology.execute();
+    topology.exec();
   });
 
   return topology;
