@@ -12,6 +12,27 @@
 npm install tower-ec2-adapter
 ```
 
+## Example
+
+```js
+var ec2 = require('tower-ec2-adapter');
+
+ec2('instance').create(function(err, instance){
+  
+});
+
+ec2('instance')
+  .where('imageId').eq('ami-7539b41c')
+  .find(function(err, instances){
+
+  });
+
+// or deal with the underlying stream
+ec2('instance').find().on('data', function(instance){
+  
+});
+```
+
 ## Notes
 
 - https://aws.amazon.com/amis/ Amazon Machine Images (AMIs)
