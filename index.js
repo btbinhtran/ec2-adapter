@@ -53,7 +53,8 @@ function init(obj) {
     , 'volume'
     , 'zone' // availability zone
   ].forEach(function(name){
-    obj.model.load(name, require.resolve('./lib/models/' + name));
+    // XXX: load should handle namespacing
+    obj.model.load('ec2.' + name, require.resolve('./lib/models/' + name));
   });
 
   for (var key in proto) obj[key] = proto[key];

@@ -55,7 +55,9 @@ describe('ec2 adapter', function(){
   describe('key (key-pair)', function(){
     it('should list', function(done){
       ec2('key')
-        .find()
+        .use('ec2')
+        //.find()
+        .action('find')
         .exec(function(err, keys){
           console.log('done!')
           console.log(arguments);
