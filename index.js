@@ -24,7 +24,7 @@ function ec2(obj) {
     // return query().start('ec2.' + obj);
     return query().start('ec2.' + obj);
   } else {
-    init(obj || adapter('ec2'));
+    load(obj || adapter('ec2'));
     return ec2;
   }
 }
@@ -33,7 +33,7 @@ function ec2(obj) {
  * Wire up the adapter.
  */
 
-function init(obj) {
+function load(obj) {
 
   /**
    * Lazy-loaded dependencies.
@@ -60,12 +60,4 @@ function init(obj) {
   for (var key in proto) obj[key] = proto[key];
 
   return obj;
-}
-
-/**
- * Common init for all actions.
- */
-
-function initContext(context){
-  context.ec2 = ec2;
 }
