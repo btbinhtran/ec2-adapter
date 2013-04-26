@@ -58,6 +58,21 @@ function load(obj) {
     obj.model.load('ec2.' + name, require.resolve('./lib/models/' + name), serializer);
   });
 
+  // XXX: refactor
+  require('tower-stream').on('define ec2', function(action){
+    action.to = function(type, name) {
+      // get last defined attribute.
+      var attr = this.context;
+      name || (name = attr.name);
+
+      attr.to = function(ctx, attr, constraint) {
+        return { type: 'filter', key: name, val: constraint[constraint.length - 1] };
+      }
+
+      return this;
+    }
+  });
+
   for (var key in proto) obj[key] = proto[key];
 
   return obj;

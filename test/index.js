@@ -57,8 +57,6 @@ describe('ec2 adapter', function(){
         //.find()
         .action('find')
         .exec(function(err, keys){
-          console.log('done!')
-          console.log(arguments);
           done();
         });
     });
