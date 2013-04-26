@@ -55,6 +55,9 @@ function load(obj) {
     , 'zone' // availability zone
   ].forEach(function(name){
     // XXX: load should handle namespacing
+    // XXX: should only attach one event handler, and delegate them,
+    //      then it should remove it after it's done.
+    //      so, a `once` event handler.
     obj.model.load('ec2.' + name, require.resolve('./lib/models/' + name), serializer);
   });
 
