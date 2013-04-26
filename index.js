@@ -5,7 +5,8 @@
 
 var adapter = require('tower-adapter')
   , query = require('tower-query')
-  , proto = require('./lib/proto');
+  , proto = require('./lib/proto')
+  , serializer = require('./lib/serializer');
 
 /**
  * Expose `ec2` adapter.
@@ -22,7 +23,7 @@ function ec2(obj) {
     // XXX: perform a simple query.
     // XXX: refactor out to adapter base module.
     // return query().start('ec2.' + obj);
-    return query().start('ec2.' + obj);
+    return query().use('ec2').start('ec2.' + obj);
   } else {
     load(obj || adapter('ec2'));
     return ec2;
@@ -54,7 +55,7 @@ function load(obj) {
     , 'zone' // availability zone
   ].forEach(function(name){
     // XXX: load should handle namespacing
-    obj.model.load('ec2.' + name, require.resolve('./lib/models/' + name));
+    obj.model.load('ec2.' + name, require.resolve('./lib/models/' + name), serializer);
   });
 
   for (var key in proto) obj[key] = proto[key];

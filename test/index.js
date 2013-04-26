@@ -40,13 +40,11 @@ describe('ec2 adapter', function(){
   });
 
   it('should list images', function(done){
-    query()
-      .use('ec2')
-      .select('image')
-      //.where('architecture').eq('x86_64')
+    ec2('image')
+      .where('architecture').eq('x86_64')
+      .where('imageId').eq(imageId)
       .action('find')
-      .exec()
-      .on('data', function(images){
+      .exec(function(err, images){
         console.log(images);
         done();
       });
