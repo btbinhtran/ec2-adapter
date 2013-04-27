@@ -19,22 +19,26 @@ module.exports = ec2;
  */
 
 function ec2(obj) {
+  if (!loaded) load(adapter('ec2'));
+
   if ('string' === typeof obj) {
     // XXX: perform a simple query.
     // XXX: refactor out to adapter base module.
     // return query().start('ec2.' + obj);
     return query().use('ec2').start('ec2.' + obj);
   } else {
-    load(obj || adapter('ec2'));
-    return ec2;
+    return adapter('ec2');
   }
 }
+
+var loaded = false;
 
 /**
  * Wire up the adapter.
  */
 
 function load(obj) {
+  loaded = true;
 
   /**
    * Lazy-loaded dependencies.
