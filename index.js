@@ -5,7 +5,7 @@
 
 var adapter = require('tower-adapter')
   , query = require('tower-query')
-  , validate = require('tower-validate')
+  , operator = require('tower-operator')
   , proto = require('./lib/proto')
   , serializer = require('./lib/serializer');
 
@@ -103,17 +103,20 @@ function validates(type, val) {
   // XXX: if this.context is attr, then do what it does now,
   //      otherwise do a general validation on the whole query.
   var attr = this.context;
+  var validate = operator(type);
 
-  var validator = validate.validator(type);
-
-  this.validators.push(function(ctx, constraints){
+  this.validators.push(function(ctx, query){
+    var constraints = query.constraints;
     // XXX: plenty of room for optimization, since this is called
     // for every validator (for each validator, iterate through all the constraints).
     for (var i = 0, n = constraints.length; i < n; i++) {
       var constraint = constraints[i][1];
-      if (attr.name === constraint.left.attr) {
-        // e.g. `validate(status: in: [1, 2])`
-        validator(obj, constraint.left.attr, constraint.right.val);
+      if (attr.name !== constraint.left.attr) continue;
+      // e.g. `validate(status: in: [1, 2])`
+      if (!validate(constraint.right.val, val)) {
+        // XXX: pass in I18n key?
+        query.error(attr.path)
+        // XXX: also, test operators are supported.
       }
     }
   });
