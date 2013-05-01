@@ -88,9 +88,29 @@ function format(type, name) {
   name || (name = param.name);
 
   // format('param.ec2')
+  // type('ec2.filter')
   param.format = function(ctx, attr, constraint){
     return { type: 'filter', key: name, val: constraint[constraint.length - 1] };
   }
 
   return this;
 }
+
+/*
+serializer('ec2')
+  .format('filter', function(name){
+
+  });
+
+adapter('ec2')
+  .format('filter', function(name){
+    return function filter(action, constraint){
+
+    }
+  })
+  .format('basic')
+
+adapter('ec2')
+  .type('filter')
+  .type('basic');
+*/
