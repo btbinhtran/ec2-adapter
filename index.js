@@ -75,11 +75,6 @@ function load(obj) {
   // XXX: refactor
   require('tower-stream').on('define ec2', function(action){
     action.format = format;
-
-    // XXX: deprecate
-    action.to = action.format;
-
-    action.validate = validate;
   });
 
   for (var key in proto) obj[key] = proto[key];
@@ -89,35 +84,13 @@ function load(obj) {
 
 function format(type, name) {
   // get last defined attribute.
-  var attr = this.context;
-  name || (name = attr.name);
+  var param = this.context;
+  name || (name = param.name);
 
-  attr.to = function(ctx, attr, constraint) {
+  // format('param.ec2')
+  param.format = function(ctx, attr, constraint){
     return { type: 'filter', key: name, val: constraint[constraint.length - 1] };
   }
 
   return this;
-}
-
-function validate(type, val) {
-  // XXX: if this.context is attr, then do what it does now,
-  //      otherwise do a general validation on the whole query.
-  var attr = this.context;
-  var validate = operator(type);
-
-  this.validators.push(function(ctx, query){
-    var constraints = query.constraints;
-    // XXX: plenty of room for optimization, since this is called
-    // for every validator (for each validator, iterate through all the constraints).
-    for (var i = 0, n = constraints.length; i < n; i++) {
-      var constraint = constraints[i][1];
-      if (attr.name !== constraint.left.attr) continue;
-      // e.g. `validate(status: in: [1, 2])`
-      if (!validate(constraint.right.val, val)) {
-        // XXX: pass in I18n key?
-        query.error(attr.path)
-        // XXX: also, test operators are supported.
-      }
-    }
-  });
 }
