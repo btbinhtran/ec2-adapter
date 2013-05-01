@@ -79,7 +79,7 @@ function load(obj) {
     // XXX: deprecate
     action.to = action.format;
 
-    action.validate = validates;
+    action.validate = validate;
   });
 
   for (var key in proto) obj[key] = proto[key];
@@ -99,7 +99,7 @@ function format(type, name) {
   return this;
 }
 
-function validates(type, val) {
+function validate(type, val) {
   // XXX: if this.context is attr, then do what it does now,
   //      otherwise do a general validation on the whole query.
   var attr = this.context;
