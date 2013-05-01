@@ -32,11 +32,7 @@ function ec2(obj) {
   }
 }
 
-['connect', 'disconnect'].forEach(function(method){
-  ec2[method] = function(){
-    return ec2()[method].apply(adapter('ec2'), arguments);
-  }
-});
+adapter.api('ec2', ec2);
 
 var loaded = false;
 
@@ -103,6 +99,7 @@ serializer('ec2')
   });
 
 adapter('ec2')
+  // format a param!
   .format('filter', function(name){
     return function filter(action, constraint){
 
