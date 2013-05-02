@@ -8,8 +8,7 @@
     "tower-query": "*",
     "tower-topology": "*",
     "tower-model": "*",
-    "tower-stream": "*",
-    "tower-operator": "*"
+    "tower-stream": "*"
   },
   "devDependencies": {
     "tower-graph": "*"

@@ -6,7 +6,7 @@ var adapter = require('tower-adapter')
 
 adapter.model = model.ns('ec2');
 
-var ec2 = require('..')();
+var ec2 = require('..');
 
 describe('ec2 adapter', function(){
   var imageId = 'ami-7539b41c';
@@ -43,8 +43,7 @@ describe('ec2 adapter', function(){
     ec2('image')
       .where('architecture').eq('x86_64')
       .where('imageId').eq(imageId)
-      .action('find')
-      .exec(function(err, images){
+      .find(function(err, images){
         console.log(images);
         done();
       });

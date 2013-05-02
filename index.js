@@ -5,7 +5,6 @@
 
 var adapter = require('tower-adapter')
   , query = require('tower-query')
-  , operator = require('tower-operator')
   , proto = require('./lib/proto')
   , serializer = require('./lib/serializer');
 
@@ -20,8 +19,6 @@ module.exports = ec2;
  */
 
 function ec2(obj) {
-  if (!loaded) load(adapter('ec2'));
-
   if ('string' === typeof obj) {
     // XXX: perform a simple query.
     // XXX: refactor out to adapter base module.
@@ -33,16 +30,13 @@ function ec2(obj) {
 }
 
 adapter.api('ec2', ec2);
-
-var loaded = false;
+load(adapter('ec2'));
 
 /**
  * Wire up the adapter.
  */
 
 function load(obj) {
-  loaded = true;
-
   /**
    * Lazy-loaded dependencies.
    */
@@ -55,7 +49,7 @@ function load(obj) {
     'key', // key-pair
     'region',
     'route',
-    'route-,table'
+    'route-table',
     'snapshot',
     'tag',
     'volume',
@@ -86,7 +80,7 @@ function format(type, name) {
   // format('param.ec2')
   // type('ec2.filter')
   param.format = function(ctx, attr, constraint){
-    return { type: 'filter', key: name, val: constraint[constraint.length - 1] };
+    return { type: type, key: name, val: constraint[constraint.length - 1].right.value };
   }
 
   return this;
