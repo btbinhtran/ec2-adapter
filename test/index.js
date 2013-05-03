@@ -71,4 +71,27 @@ describe('ec2 adapter', function(){
       });
     });
   });
+
+  describe('security-group', function(){
+    it('should list', function(done){
+      ec2('group')
+        .where('name').eq('default')
+        .find(function(err, groups){
+          console.log(groups)
+          done();
+        });
+    });
+
+    it('should create', function(done){
+      done();
+    });
+
+    it('should update', function(done){
+      done();
+    });
+
+    it('should remove', function(done){
+      done();
+    });
+  });
 });

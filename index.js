@@ -80,7 +80,7 @@ function format(type, name) {
   // format('param.ec2')
   // type('ec2.filter')
   param.format = function(ctx, attr, constraint){
-    return { type: type, key: name, val: constraint[constraint.length - 1].right.value };
+    return { type: type, key: name, val: constraint[constraint.length - 1].right.value, kind: param.type };
   }
 
   return this;
