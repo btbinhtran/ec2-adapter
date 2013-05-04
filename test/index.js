@@ -18,7 +18,7 @@ describe('ec2 adapter', function(){
   });
 
   it('should create/remove instances', function(done){
-    query().use('ec2').select('instance').action('find').exec().on('data', function(instances){
+    ec2('instance').action('find').exec().on('data', function(instances){
       query()
         .use('ec2')
         .select('instance')

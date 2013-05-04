@@ -9,9 +9,7 @@
     "tower-topology": "*",
     "tower-model": "*",
     "tower-stream": "*",
-    "tower-load": "*"
-  },
-  "devDependencies": {
-    "tower-graph": "*"
+    "tower-load": "*",
+    "tower-inflector": "*"
   }
 }

@@ -5,6 +5,7 @@
 
 var adapter = require('tower-adapter')
   , query = require('tower-query')
+  , stream = require('tower-stream')
   , proto = require('./lib/proto')
   , serializer = require('./lib/serializer');
 
@@ -31,6 +32,9 @@ function ec2(obj) {
 
 adapter.api('ec2', ec2);
 load(adapter('ec2'));
+ec2.action = function(name){
+  return stream('ec2.' + name);
+}
 
 /**
  * Wire up the adapter.
@@ -43,6 +47,11 @@ function load(obj) {
    */
 
   var actions = [ 'find', 'create', 'update', 'remove' ];
+
+  // XXX: refactor
+  require('tower-stream').on('define ec2', function(action){
+    action.format = format;
+  });
 
   [
     'address',
@@ -63,15 +72,10 @@ function load(obj) {
     //      so, a `once` event handler.
     // XXX: load should handle namespacing
     var path = require.resolve('./lib/models/' + name);
-    obj.model.load('ec2.' + name, path, serializer);
+    obj.model.load('ec2.' + name, path, obj.model);
     actions.forEach(function(action){
-      obj.action.load('ec2.' + name + '.' + action, path);
+      obj.action.load('ec2.' + name + '.' + action, path, obj.model);
     });
-  });
-
-  // XXX: refactor
-  require('tower-stream').on('define ec2', function(action){
-    action.format = format;
   });
 
   for (var key in proto) obj[key] = proto[key];
