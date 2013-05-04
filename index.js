@@ -37,9 +37,12 @@ load(adapter('ec2'));
  */
 
 function load(obj) {
+
   /**
    * Lazy-loaded dependencies.
    */
+
+  var actions = [ 'find', 'create', 'update', 'remove' ];
 
   [
     'address',
@@ -55,11 +58,15 @@ function load(obj) {
     'volume',
     'zone' // availability zone
   ].forEach(function(name){
-    // XXX: load should handle namespacing
     // XXX: should only attach one event handler, and delegate them,
     //      then it should remove it after it's done.
     //      so, a `once` event handler.
-    obj.model.load('ec2.' + name, require.resolve('./lib/models/' + name), serializer);
+    // XXX: load should handle namespacing
+    var path = require.resolve('./lib/models/' + name);
+    obj.model.load('ec2.' + name, path, serializer);
+    actions.forEach(function(action){
+      obj.action.load('ec2.' + name + '.' + action, path);
+    });
   });
 
   // XXX: refactor
@@ -79,8 +86,8 @@ function format(type, name) {
 
   // format('param.ec2')
   // type('ec2.filter')
-  param.format = function(ctx, attr, constraint){
-    return { type: type, key: name, val: constraint[constraint.length - 1].right.value, kind: param.type };
+  param.format = function(ctx, attr, val){
+    return { type: type, key: name, val: val, kind: param.type };
   }
 
   return this;
