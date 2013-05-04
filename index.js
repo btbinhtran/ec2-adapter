@@ -6,8 +6,7 @@
 var adapter = require('tower-adapter')
   , query = require('tower-query')
   , stream = require('tower-stream')
-  , proto = require('./lib/proto')
-  , serializer = require('./lib/serializer');
+  , proto = require('./lib/proto');
 
 /**
  * Expose `ec2` adapter.
@@ -49,7 +48,7 @@ function load(obj) {
   var actions = [ 'find', 'create', 'update', 'remove' ];
 
   // XXX: refactor
-  require('tower-stream').on('define ec2', function(action){
+  stream.on('define ec2', function(action){
     action.format = format;
   });
 
@@ -87,7 +86,7 @@ function format(type, name) {
   // get last defined attribute.
   var param = this.context;
   name || (name = param.name);
-  
+
   param.format = function(ctx, attr, val){
     return { type: type, key: name, val: val, kind: param.type };
   }
