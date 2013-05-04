@@ -87,32 +87,10 @@ function format(type, name) {
   // get last defined attribute.
   var param = this.context;
   name || (name = param.name);
-
-  // format('param.ec2')
-  // type('ec2.filter')
+  
   param.format = function(ctx, attr, val){
     return { type: type, key: name, val: val, kind: param.type };
   }
 
   return this;
 }
-
-/*
-serializer('ec2')
-  .format('filter', function(name){
-
-  });
-
-adapter('ec2')
-  // format a param!
-  .format('filter', function(name){
-    return function filter(action, constraint){
-
-    }
-  })
-  .format('basic')
-
-adapter('ec2')
-  .type('filter')
-  .type('basic');
-*/
